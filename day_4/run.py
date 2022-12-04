@@ -17,56 +17,41 @@ def parse_input(lines):
     for line in lines:
         # Split the line on the ',' character to separate the assignments
         assignments = line.split(',')
-
         # Iterate over the assignments
-        for assignment in assignments:
-            # Split the assignment on the '-' character to extract the start and end IDs
-            start, end = assignment.split('-')
+        line_pairs = [map(int, assignment.split('-')) for assignment in assignments ]
 
-            # Convert the start and end IDs to integers
-            start = int(start)
-            end = int(end)
-
-            pairs.append((start,end))
+        pairs.append(line_pairs)
     return pairs
-            
-    
 
-# # Define a function to compare the two assignments in each pair
-# def compare_assignments(pairs):
-#     # Create a counter variable to store the number of pairs where one assignment fully contains the other
-#     counter = 0
+def subsection(start1,end1,start2,end2):
+    return (start1 <= start2 and end1 >= end2) or (start2 <= start1 and end2 >= end1)
 
-#     # Iterate over the pairs
-#     for start1, end1 in pairs:
-#         for start2, end2 in pairs:
-#             # Check if one assignment fully contains the other
-#             if (start1 <= start2 and end1 >= end2) or (start2 <= start1 and end2 >= end1):
-#                 # If one assignment fully contains the other, increment the counter
-#                 counter += 1
+def overlap(start1,end1,start2,end2):
+    return start1 <= end2 and start2 <= end1
 
-#     # Return the counter
-#     return counter
 
 # Define a function to compare the two assignments in each pair
 def compare_assignments(pairs):
     # Create a counter variable to store the number of pairs where one assignment fully contains the other
-    counter = 0
+    subsection_counter , overlap_counter= 0,0
 
     # Iterate over the pairs
-    for i, (start1, end1) in enumerate(pairs):
-        for j, (start2, end2) in enumerate(pairs):
-            # Skip pairs that have already been compared
-            # if i >= j:
-            if i>= j or (start1 == start2 and end1 == end2):
-                continue
-            # Check if one assignment fully contains the other
-            if (start1 <= start2 and end1 >= end2) or (start2 <= start1 and end2 >= end1):
-                # If one assignment fully contains the other, increment the counter
-                counter += 1
+    for i, [(start1, end1), (start2, end2)] in enumerate(pairs):
+        # if start1 == start2 and end1 == end2):
+        #     continue
+        # # Check if one assignment fully contains the other
+        if subsection(start1,end1,start2,end2):
+            # If one assignment fully contains the other, increment the counter
+            subsection_counter += 1
+            # print([(start1, end1), (start2, end2)])
+        if overlap(start1,end1,start2,end2):
+            overlap_counter += 1
+            
+            
+
 
     # Return the counter
-    return counter
+    return subsection_counter, overlap_counter
 
 
 lines = get_data()
